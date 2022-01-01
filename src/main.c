@@ -45,6 +45,11 @@ u32 IntrMain_Buffer[0x200];
 void InitIntrHandlers(void);
 void EnableVCountIntrAtLine150(void);
 
+const u32 gKeyboard61Tiles[] = INCBIN_U32("graphics/keyboard_61.4bpp.lz");
+const u32 gKeyboard61Palette[] = INCBIN_U32("graphics/keyboard_61.gbapal.lz");
+
+void InitBG(void);
+
 //extern const u8 edward_elgar_salut_d_amour_piano_solo_1[];
 
 #define MAX_TRACK_SIZE 0x1000
@@ -105,6 +110,7 @@ void AgbMain()
     InitIntrHandlers();
     EnableVCountIntrAtLine150();
     mgba_open();
+    InitBG();
     m4aSoundInit();
     //m4aSongNumStart(0);
     mgba_printf(MGBA_LOG_INFO, "AgbMain: score: %s", gScores[0]);
@@ -350,4 +356,25 @@ void EnableInterrupts(u16 mask)
             sGpuRegBufferLocked = FALSE;
         }
     }
+}
+
+void fillBGMap()
+{
+    u16 *map = BG_SCREEN_ADDR(24);
+    for (int row = 0; row < 20; row++)
+    {
+        for (int col = 0; col < 30; col++)
+        {
+            map[row * 32 + col] = row * 30 + col;
+        }
+    }
+}
+
+void InitBG(void)
+{
+    REG_DISPCNT = DISPCNT_BG0_ON;
+    REG_BG0CNT |= BGCNT_SCREENBASE(24);
+    LZ77UnCompVram(gKeyboard61Palette, PLTT);
+    LZ77UnCompVram(gKeyboard61Tiles, BG_CHAR_ADDR(0));
+    fillBGMap();
 }
