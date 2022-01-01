@@ -174,6 +174,65 @@ void m4aSongNumContinue(u16 n)
         MPlayContinue(mplay->info);
 }
 
+void m4aSongStart(struct Song *song)
+{
+    const struct MusicPlayer *mplayTable = gMPlayTable;
+    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+
+    MPlayStart(mplay->info, song->header);
+}
+
+void m4aSongStartOrChange(struct Song *song)
+{
+    const struct MusicPlayer *mplayTable = gMPlayTable;
+    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+
+    if (mplay->info->songHeader != song->header)
+    {
+        MPlayStart(mplay->info, song->header);
+    }
+    else
+    {
+        if ((mplay->info->status & MUSICPLAYER_STATUS_TRACK) == 0
+         || (mplay->info->status & MUSICPLAYER_STATUS_PAUSE))
+        {
+            MPlayStart(mplay->info, song->header);
+        }
+    }
+}
+
+void m4aSongStartOrContinue(struct Song *song)
+{
+    const struct MusicPlayer *mplayTable = gMPlayTable;
+    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+
+    if (mplay->info->songHeader != song->header)
+        MPlayStart(mplay->info, song->header);
+    else if ((mplay->info->status & MUSICPLAYER_STATUS_TRACK) == 0)
+        MPlayStart(mplay->info, song->header);
+    else if (mplay->info->status & MUSICPLAYER_STATUS_PAUSE)
+        MPlayContinue(mplay->info);
+}
+
+void m4aSongStop(struct Song *song)
+{
+    const struct MusicPlayer *mplayTable = gMPlayTable;
+    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+
+    if (mplay->info->songHeader == song->header)
+        m4aMPlayStop(mplay->info);
+}
+
+void m4aSongContinue(struct Song *song)
+{
+    const struct MusicPlayer *mplayTable = gMPlayTable;
+    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+
+    if (mplay->info->songHeader == song->header)
+        MPlayContinue(mplay->info);
+}
+
+
 void m4aMPlayAllStop(void)
 {
     s32 i;

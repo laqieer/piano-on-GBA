@@ -227,34 +227,6 @@ const u8 gClockTable[] =
     0x60,
 };
 
-#define FINE   0xb1
-#define GOTO   0xb2
-#define PATT   0xb3
-#define PEND   0xb4
-#define REPT   0xb5
-#define MEMACC 0xb9
-#define PRIO   0xba
-#define TEMPO  0xbb
-#define KEYSH  0xbc
-#define VOICE  0xbd
-#define VOL    0xbe
-#define PAN    0xbf
-#define BEND   0xc0
-#define BENDR  0xc1
-#define LFOS   0xc2
-#define LFODL  0xc3
-#define MOD    0xc4
-#define MODT   0xc5
-#define TUNE   0xc8
-
-#define XCMD   0xcd
-#define xRELE  0x07
-#define xIECV  0x08
-#define xIECL  0x09
-
-#define EOT    0xce
-#define TIE    0xcf
-
 const struct PokemonCrySong gPokemonCrySongTemplate =
 {
     1, // track count
