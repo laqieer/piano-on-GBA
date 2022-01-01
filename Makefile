@@ -175,7 +175,6 @@ tidy:
 	rm -f $(ROM) $(ELF) $(MAP)
 	rm -r $(OBJ_DIR)
 
-include graphics_file_rules.mk
 include songs.mk
 
 %.s: ;

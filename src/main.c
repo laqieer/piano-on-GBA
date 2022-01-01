@@ -47,8 +47,11 @@ void EnableVCountIntrAtLine150(void);
 
 const u32 gKeyboard61Tiles[] = INCBIN_U32("graphics/keyboard_61.4bpp.lz");
 const u32 gKeyboard61Palette[] = INCBIN_U32("graphics/keyboard_61.gbapal.lz");
+const u32 gKeyMaskTiles[] = INCBIN_U32("graphics/key_mask.4bpp.lz");
+const u32 gKeyMaskPalette[] = INCBIN_U32("graphics/key_mask.gbapal.lz");
 
 void InitBG(void);
+void InitOBJ(void);
 
 //extern const u8 edward_elgar_salut_d_amour_piano_solo_1[];
 
@@ -111,6 +114,7 @@ void AgbMain()
     EnableVCountIntrAtLine150();
     mgba_open();
     InitBG();
+    InitOBJ();
     m4aSoundInit();
     //m4aSongNumStart(0);
     mgba_printf(MGBA_LOG_INFO, "AgbMain: score: %s", gScores[0]);
@@ -374,7 +378,96 @@ void InitBG(void)
 {
     REG_DISPCNT = DISPCNT_BG0_ON;
     REG_BG0CNT |= BGCNT_SCREENBASE(24);
-    LZ77UnCompVram(gKeyboard61Palette, PLTT);
+    LZ77UnCompVram(gKeyboard61Palette, BG_PLTT);
     LZ77UnCompVram(gKeyboard61Tiles, BG_CHAR_ADDR(0));
     fillBGMap();
+}
+
+const int gKeyPositions[128][2] = {
+    [Cn2] = {0, 72},
+    [Cs2] = {4, 56},
+    [Dn2] = {7, 72},
+    [Ds2] = {11, 56},
+    [En2] = {13, 72},
+    [Fn2] = {20, 72},
+    [Fs2] = {24, 56},
+    [Gn2] = {27, 72},
+    [Gs2] = {30, 56},
+    [An2] = {33, 72},
+    [As2] = {37, 56},
+    [Bn2] = {40, 72},
+    [Cn3] = {46, 72},
+    [Cs3] = {50, 56},
+    [Dn3] = {53, 72},
+    [Ds3] = {58, 56},
+    [En3] = {60, 72},
+    [Fn3] = {66, 72},
+    [Fs3] = {70, 56},
+    [Gn3] = {73, 72},
+    [Gs3] = {77, 56},
+    [An3] = {79, 72},
+    [As3] = {84, 56},
+    [Bn3] = {86, 72},
+    [Cn4] = {93, 72},
+    [Cs4] = {97, 56},
+    [Dn4] = {100, 72},
+    [Ds4] = {104, 56},
+    [En4] = {106, 72},
+    [Fn4] = {113, 72},
+    [Fs4] = {117, 56},
+    [Gn4] = {119, 72},
+    [Gs4] = {123, 56},
+    [An4] = {126, 72},
+    [As4] = {130, 56},
+    [Bn4] = {132, 72},
+    [Cn5] = {139, 72},
+    [Cs5] = {143, 56},
+    [Dn5] = {146, 72},
+    [Ds5] = {150, 56},
+    [En5] = {152, 72},
+    [Fn5] = {159, 72},
+    [Fs5] = {163, 56},
+    [Gn5] = {166, 72},
+    [Gs5] = {169, 56},
+    [An5] = {172, 72},
+    [As5] = {176, 56},
+    [Bn5] = {179, 72},
+    [Cn6] = {185, 72},
+    [Cs6] = {189, 56},
+    [Dn6] = {192, 72},
+    [Ds6] = {196, 56},
+    [En6] = {198, 72},
+    [Fn6] = {205, 72},
+    [Fs6] = {209, 56},
+    [Gn6] = {212, 72},
+    [Gs6] = {216, 56},
+    [An6] = {219, 72},
+    [As6] = {223, 56},
+    [Bn6] = {225, 72},
+    [Cn7] = {232, 72},
+};
+
+void fillOAM()
+{
+    struct OamData oamTmp;
+    struct OamData *oam = OAM;
+    for (int i = 0; i < 128; i++)
+    {
+        oamTmp.affineMode = ST_OAM_AFFINE_ERASE;
+        oamTmp.objMode = ST_OAM_OBJ_BLEND;
+        oamTmp.shape = ST_OAM_V_RECTANGLE;
+        oamTmp.x = gKeyPositions[i][0];
+        oamTmp.y = gKeyPositions[i][1];
+        *(u32 *)(&oam[i]) = *(u32 *)(&oamTmp);
+    }
+}
+
+void InitOBJ(void)
+{
+    REG_DISPCNT |= DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP;
+    LZ77UnCompVram(gKeyMaskPalette, OBJ_PLTT);
+    LZ77UnCompVram(gKeyMaskTiles, OBJ_VRAM0);
+    fillOAM();
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0;
+    REG_BLDALPHA = BLDALPHA_BLEND(8, 8);
 }

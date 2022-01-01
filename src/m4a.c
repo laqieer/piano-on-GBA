@@ -1846,9 +1846,19 @@ void ply_mod(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
     if (track->mod == 0) ClearModM(mplayInfo, track);
 }
 
+void remove_masks()
+{
+    for (int key = 0; key < 128; key++)
+    {
+        *(u16 *)(OAM + 8 * key) |= ST_OAM_AFFINE_ERASE << 8;
+    }
+}
+
 void ply_endtie(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
 {
     struct SoundChannel *tempChan;
+
+    //remove_masks();
 
     if (*track->cmdPtr < 0x80) {
         track->key = *track->cmdPtr;
@@ -1863,6 +1873,10 @@ void ply_endtie(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *trac
     tempChan->statusFlags |= 0x40;
 }
 
+void mask_key(u8 key)
+{
+    *(u16 *)(OAM + 8 * key) &= ~(ST_OAM_AFFINE_ERASE << 8);
+}
 
 void ply_note(u32 time, struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
 {
@@ -1881,6 +1895,8 @@ void ply_note(u32 time, struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTra
     struct ToneData *inst = &track->tone;
     u8 instType = track->tone.type;
     u8 instKey = track->key;
+    remove_masks();
+    mask_key(instKey);
     if (instType & (TONEDATA_TYPE_RHY | TONEDATA_TYPE_SPL)) {
         u32 instIndex = 12 * track->key;
         if (instType & TONEDATA_TYPE_SPL) instIndex = track->tone.keySplitTable[track->key] * 12;
@@ -2070,6 +2086,7 @@ void MPlayMain(struct MusicPlayerInfo *mplayInfo)
                                 ply_note(cmd - 0xcf,mplayInfo,tempTrack);
                             }else if(cmd <= 0xb0){
                                 tempTrack->wait = gClockTable[cmd - 0x80];
+                                //remove_masks();
                             }else{
                                 mplayInfo->cmd = (u8)(cmd - 0xb1);
                                 void (*MPlayJumpTable)(struct MusicPlayerInfo*, struct MusicPlayerTrack*, u8*);
