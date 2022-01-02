@@ -55,6 +55,8 @@ void InitOBJ(void);
 
 //extern const u8 edward_elgar_salut_d_amour_piano_solo_1[];
 
+u8 gAutoplay = 0;
+
 #define MAX_TRACK_SIZE 0x1000
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
 const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &voicegroup005, &gCurrSongTrack};
@@ -409,6 +411,27 @@ static void VBlankIntr(void)
     m4aSoundMain();
 
     key_poll();
+
+    u8 autoplay = gAutoplay;
+    if (key_hit(DPAD_UP))
+    {
+        gAutoplay = 1 - gAutoplay;
+    }
+
+    if (gAutoplay)
+    {
+        if (!autoplay)
+        {
+            fillSong(gScores[0]);
+            m4aSongStart(&gCurrSong);
+        }
+        return;
+    }
+
+    if (autoplay)
+    {
+        m4aSongStop(&gCurrSong);
+    }
 
     clearCurrNotes();
 
