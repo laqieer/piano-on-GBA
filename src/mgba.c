@@ -31,19 +31,25 @@
 #define REG_DEBUG_STRING (char*) 0x4FFF600
 
 void mgba_printf(int level, const char* ptr, ...) {
+#ifdef DEBUG
 	va_list args;
 	level &= 0x7;
 	va_start(args, ptr);
 	vsnprintf(REG_DEBUG_STRING, 0x100, ptr, args);
 	va_end(args);
 	*REG_DEBUG_FLAGS = level | 0x100;
+#endif
 }
 
 bool8 mgba_open(void) {
+#ifdef DEBUG
 	*REG_DEBUG_ENABLE = 0xC0DE;
 	return *REG_DEBUG_ENABLE == 0x1DEA;
+#endif
 }
 
 void mgba_close(void) {
+#ifdef DEBUG
 	*REG_DEBUG_ENABLE = 0;
+#endif
 }
