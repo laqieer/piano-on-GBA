@@ -53,17 +53,13 @@ const u32 gKeyMaskPalette[] = INCBIN_U32("graphics/key_mask.gbapal.lz");
 void InitBG(void);
 void InitOBJ(void);
 
-//extern const u8 edward_elgar_salut_d_amour_piano_solo_1[];
-
 u8 gAutoplay = 0;
 
 #define MAX_TRACK_SIZE 0x1000
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
 const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &voicegroup005, &gCurrSongTrack};
-//const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &voicegroup005, edward_elgar_salut_d_amour_piano_solo_1};
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
 void fillSong(char *score);
-void fillSongTest(const u8 *track);
 void fillSongWithNotes(u8 *notes);
 
 const char * const gScores[] = {
@@ -170,15 +166,6 @@ void AgbMain()
 
     EnableKeyInput();
 
-    //m4aSongNumStart(0);
-    //mgba_printf(MGBA_LOG_INFO, "AgbMain: score: %s", gScores[0]);
-    //fillSong(gScores[0]);
-    //mgba_printf(MGBA_LOG_INFO, "AgbMain: fillSong done!");
-    //fillSongTest(*(gSongTable[0].header->part));
-    //mgba_printf(MGBA_LOG_DEBUG, "AgbMain: gSongTable[0].header->part: 0x%x", *(gSongTable[0].header->part));
-    //fillSongTest(edward_elgar_salut_d_amour_piano_solo_1);
-    //mgba_printf(MGBA_LOG_DEBUG, "AgbMain: edward_elgar_salut_d_amour_piano_solo_1: 0x%x", edward_elgar_salut_d_amour_piano_solo_1);
-    //m4aSongStart(&gCurrSong);
     for (;;)
     {
         VBlankIntrWait();
@@ -300,11 +287,6 @@ void fillSong(char *score) {
     gCurrSongTrack[i++] = 0;
     gCurrSongTrack[i++] = 0;
     gCurrSongTrack[i++] = 0;
-}
-
-void fillSongTest(const u8 *track)
-{
-    memcpy(gCurrSongTrack, track, MAX_TRACK_SIZE);
 }
 
 void fillSongWithNotes(u8 *notes)

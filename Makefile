@@ -74,7 +74,6 @@ LIB := $(LIBPATH) -lgcc -lc -L../../libagbsyscall -lagbsyscall
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 GFX := tools/gbagfx/gbagfx$(EXE)
 AIF := tools/aif2pcm/aif2pcm$(EXE)
-MID := tools/mid2agb/mid2agb$(EXE)
 SCANINC := tools/scaninc/scaninc$(EXE)
 PREPROC := tools/preproc/preproc$(EXE)
 RAMSCRGEN := tools/ramscrgen/ramscrgen$(EXE)
@@ -174,8 +173,6 @@ mostlyclean: tidy
 tidy:
 	rm -f $(ROM) $(ELF) $(MAP)
 	rm -r $(OBJ_DIR)
-
-include songs.mk
 
 %.s: ;
 %.png: ;
