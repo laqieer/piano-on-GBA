@@ -62,6 +62,7 @@ const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &v
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
 void fillSong(char *score);
 void fillSongTest(const u8 *track);
+void fillSongWithNotes(u8 *notes);
 
 const char * const gScores[] = {
     // Lost In Thoughts All Alone (Fire Emblem)
@@ -108,6 +109,54 @@ const char * const gScores[] = {
 	"[e6]|0|w|e",
 };
 
+u16 __key_curr=0, __key_prev=0;
+
+inline void key_poll()
+{
+    __key_prev= __key_curr;
+    __key_curr= ~REG_KEYINPUT & KEYS_MASK;
+}
+
+inline u32 key_pressed(u32 key)
+{   return __key_curr & key;  }
+
+inline u32 key_hit(u32 key)
+{   return ( __key_curr &~ __key_prev) & key;  }
+
+u8 gCurrNotes[8];
+
+void clearCurrNotes()
+{
+    memset(gCurrNotes, 0, sizeof(gCurrNotes));
+}
+
+enum PITCH {
+    PITCH_LOW = 0,
+    PITCH_MID,
+    PITCH_HIGH,
+};
+
+const u8 gNoteLUT[] = {
+    Gn3, // L + A
+    An3, // L + B
+    Bn3, // L + Select
+    Cn4, // L + Start
+    Dn4, // A
+    En4, // B
+    Fn4, // Select
+    Gn4, // Start
+    An4, // R + A
+    Bn4, // R + B
+    Cn5, // R + Select
+    Dn5, // R + Start
+};
+
+void EnableKeyInput()
+{
+    EnableInterrupts(INTR_FLAG_KEYPAD);
+    REG_KEYCNT = KEY_INTR_ENABLE | KEYS_MASK;
+}
+
 void AgbMain()
 {
     InitIntrHandlers();
@@ -116,15 +165,18 @@ void AgbMain()
     InitBG();
     InitOBJ();
     m4aSoundInit();
+
+    EnableKeyInput();
+
     //m4aSongNumStart(0);
-    mgba_printf(MGBA_LOG_INFO, "AgbMain: score: %s", gScores[0]);
-    fillSong(gScores[0]);
-    mgba_printf(MGBA_LOG_INFO, "AgbMain: fillSong done!");
+    //mgba_printf(MGBA_LOG_INFO, "AgbMain: score: %s", gScores[0]);
+    //fillSong(gScores[0]);
+    //mgba_printf(MGBA_LOG_INFO, "AgbMain: fillSong done!");
     //fillSongTest(*(gSongTable[0].header->part));
     //mgba_printf(MGBA_LOG_DEBUG, "AgbMain: gSongTable[0].header->part: 0x%x", *(gSongTable[0].header->part));
     //fillSongTest(edward_elgar_salut_d_amour_piano_solo_1);
     //mgba_printf(MGBA_LOG_DEBUG, "AgbMain: edward_elgar_salut_d_amour_piano_solo_1: 0x%x", edward_elgar_salut_d_amour_piano_solo_1);
-    m4aSongStart(&gCurrSong);
+    //m4aSongStart(&gCurrSong);
     for (;;)
     {
         VBlankIntrWait();
@@ -253,6 +305,49 @@ void fillSongTest(const u8 *track)
     memcpy(gCurrSongTrack, track, MAX_TRACK_SIZE);
 }
 
+void fillSongWithNotes(u8 *notes)
+{
+    gCurrSongTrack[0] = KEYSH;
+    gCurrSongTrack[1] = 0;
+    gCurrSongTrack[2] = TEMPO;
+    gCurrSongTrack[3] = 60;
+    gCurrSongTrack[4] = VOICE;
+    gCurrSongTrack[5] = 0;
+    gCurrSongTrack[6] = VOL;
+    gCurrSongTrack[7] = 127;
+    gCurrSongTrack[8] = PAN;
+    gCurrSongTrack[9] = C_V;
+    int i = 10;
+    if (notes[0])
+    {
+        if (notes[1])
+        {
+            for (int j = 0; notes[j]; j++)
+            {
+                gCurrSongTrack[i++] = TIE;
+                gCurrSongTrack[i++] = notes[j];
+                gCurrSongTrack[i++] = 127;
+            }
+            gCurrSongTrack[i++] = W24;
+            for (int j = 0; notes[j]; j++) {
+                gCurrSongTrack[i++] = EOT;
+                gCurrSongTrack[i++] = notes[j];
+            }
+        }
+        else
+        {
+            gCurrSongTrack[i++] = N24;
+            gCurrSongTrack[i++] = notes[0];
+            gCurrSongTrack[i++] = 127;
+            gCurrSongTrack[i++] = W24;
+        }
+    }
+    gCurrSongTrack[i++] = FINE;
+    gCurrSongTrack[i++] = 0;
+    gCurrSongTrack[i++] = 0;
+    gCurrSongTrack[i++] = 0;
+}
+
 void EnableVCountIntrAtLine150(void)
 {
     u16 gpuReg = REG_DISPSTAT | (150 << 8);
@@ -312,6 +407,45 @@ void InitIntrHandlers(void)
 static void VBlankIntr(void)
 {
     m4aSoundMain();
+
+    key_poll();
+
+    clearCurrNotes();
+
+    enum PITCH pitch = PITCH_MID;
+    if (key_pressed(L_BUTTON))
+    {
+        pitch = PITCH_LOW;
+    }
+    if (key_pressed(R_BUTTON))
+    {
+        pitch = PITCH_HIGH;
+    }
+
+    int i = 0;
+    if (key_hit(A_BUTTON))
+    {
+        gCurrNotes[i++] = gNoteLUT[4 * pitch];
+    }
+    if (key_hit(B_BUTTON))
+    {
+        gCurrNotes[i++] = gNoteLUT[4 * pitch + 1];
+    }
+    if (key_hit(SELECT_BUTTON))
+    {
+        gCurrNotes[i++] = gNoteLUT[4 * pitch + 2];
+    }
+    if (key_hit(START_BUTTON))
+    {
+        gCurrNotes[i++] = gNoteLUT[4 * pitch + 3];
+    }
+
+    if (gCurrNotes[0])
+    {
+        mgba_printf(MGBA_LOG_INFO, "AgbMain: gCurrNotes: %s", gCurrNotes);
+        fillSongWithNotes(gCurrNotes);
+        m4aSongStart(&gCurrSong);
+    }
 }
 
 static void VCountIntr(void)
