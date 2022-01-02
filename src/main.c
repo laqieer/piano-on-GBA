@@ -59,7 +59,7 @@ int gSongId = 0;
 
 #define MAX_OPEN_KEYS 5
 
-#define MAX_TRACK_SIZE 0x1000
+#define MAX_TRACK_SIZE 0x2000
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
 EWRAM_DATA struct SongHeader gCurrSongHeader;
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
