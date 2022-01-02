@@ -30,6 +30,8 @@
 #define REG_DEBUG_FLAGS (vu16*) 0x4FFF700
 #define REG_DEBUG_STRING (char*) 0x4FFF600
 
+#define DEBUG
+
 void mgba_printf(int level, const char* ptr, ...) {
 #ifdef DEBUG
 	va_list args;

@@ -26,6 +26,7 @@
 #include "preproc.h"
 #include "c_file.h"
 #include "char_util.h"
+#include "string_util.h"
 #include "utf8.h"
 #include "string_parser.h"
 
@@ -380,6 +381,11 @@ void CFile::TryConvertIncbin()
                 std::printf("%d,", data);
             else
                 std::printf("%uu,", data);
+        }
+
+        if (has_suffix(path, ".txt") || has_suffix(path, ".text"))
+        {
+            std::printf("0,");
         }
 
         SkipWhitespace();

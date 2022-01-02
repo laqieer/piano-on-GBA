@@ -1,0 +1,36 @@
+[eT60*]|Tyu[upT]||
+[ywurp95]|[uo][yi][eT][ut]|[yr]|
+[upeT60]|6|6|6 [yQ]
+[wu6]|6 Sf[j6]|6|
+[upTS6]| [yd6] [uf6]||
+[toihe4]| [ig4][ts][pe4]||
+[yurof5]| [yd5][ts][ra5]||
+[upTS6]| [yd6] [uf6] 3|6
+[upTS6]| [yd6] [uf6]||
+[toihe4]| [ig4][ts][pe4]||
+[yurof5]| [yd5][ts][ra5]| [ra]
+[yupdT6]| 6 [TS6] 3|6
+[tie4]| 4 [wr4]|[qe] 4
+[wri4] 4[w0][yr] 1 [oa4] 1 [od4] 1
+[yri4]| 4 [te4]|[wr] 4
+[tie4] 4[qe][ut] 1 [sp4] 1 [pf4] 6
+[utof5]| 5 [yro5]|[toe] 5
+[yrod5] 5|2 5 5 2 5
+[yped6]| 6 [rpea6]|[yped] 6
+[upfeTS6] 3|6|3 6|
+[upTS6]| [yd6] [uf6]||
+[toihe4]| [ig4][ts][pe4]||
+[yurof5]| [yd5][ts][ra5]||
+[upTS6]| [yd6] [uf6] 3|6
+[upTS6]| [yd6] [uf6]||
+[toihe4]| [ig4][ts][pe4]||
+[yurof5]| [yd5][ts][ra5]| [ra]
+[yupdT6]| 6 [TS6] 3|6
+[tie4]| 4 [wr4]|[qe] 4
+[wri4] 4[w0][yr] 1 [oa4] 1 [od4] 1
+[yri4]| 4 [te4]|[wr] 4
+[tie4] 4[qe][ut] 1 [sp4] 1 [pf4] 6
+[utof5]| 5 [yro5]|[toe] 5
+[yrod5] 5|2 5 5 2 5
+[yped6]| 6 [rpea6]|[yped] 6
+[upfeTS6] 3|6|3 6

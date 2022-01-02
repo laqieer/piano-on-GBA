@@ -1,0 +1,40 @@
+6 0 r t|
+6 0 r t|
+6 0 r t|
+6 0 r t|
+[u6] 0 r t y o
+[u5] 0 r t y o
+[u4] 8 w e| [y3]|t|[r5]|
+[e4] 8 w e w y
+[e5] 9 e r w|
+[e4] 8 w e u y
+[u5] 9 e r|
+[u6] 0 r t y o
+[u5] 0 r t y o
+[u4] 8 w e| [y3]|t|[r5]|
+[e4] 8 w e w y
+[e5] 9 e r w|
+[e6]|0|w|e||u|
+[p4] 8 q [qo4]| [wu5]||
+5 9 w 9 [wu5] I
+[o3] 7 0 [I30]| [y92]||
+2 6 9 6 [y92] u
+[i1] 5 8 [u5] [81]|
+[t81]|[y81]|[r81]|
+[e4] [r8] [qe] 8 q [w8]
+[e4] [r8] [qe] 8 q [w8]
+[e5] [r9] [we] 9 w [w9]
+[e5] [u9] [wu] 9 [yw] 9 [uq84]||
+[u6] 0 r t y o
+[u5] 0 r t y o
+[u4] 8 w e| [y3]|t|[r5]|
+[e4] 8 w e w y
+[e5] 9 e r w|
+[e4] 8 w e u y
+[u5] 9 e r|
+[u6] 0 r t y o
+[u5] 0 r t y o
+[u4] 8 w e| [y3]|t|[r5]|
+[e4] 8 w e w y
+[e5] 9 e r w|
+[e6]|0|w|e

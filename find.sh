@@ -1,4 +1,4 @@
-top_file=src/main.c  # Replace this with the offending C or ASM file.
+top_file=src/scores.c  # Replace this with the offending C or ASM file.
 for file in $(tools/scaninc/scaninc -I include ${top_file}); do
   if ! [ -f "${file}" ]; then
     make "${file}" || echo ${file}
