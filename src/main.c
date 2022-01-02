@@ -60,10 +60,42 @@ int gSongId = 0;
 
 #define MAX_TRACK_SIZE 0x1000
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
-const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &voicegroup005, &gCurrSongTrack};
+EWRAM_DATA struct SongHeader gCurrSongHeader;
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
 void fillSongWithScore(char *score);
 void fillSongWithNotes(u8 *notes);
+
+const struct ToneData * const voicegroups[] = {
+    &voicegroup000,
+    &voicegroup001,
+    &voicegroup002,
+    &voicegroup003,
+    &voicegroup004,
+    &voicegroup005,
+    &voicegroup006,
+    &voicegroup007,
+    &voicegroup008,
+    &voicegroup009,
+    //&voicegroup117,
+};
+
+#define MAX_VOICEGROUP_NUM sizeof(voicegroups) / sizeof(voicegroups) - 1
+
+int gCurrVoice;
+
+#define MAX_VOICE_NUM 3
+#define DEFAULT_VOICE_NUM 1
+
+void initCurrSongHeader()
+{
+    gCurrSongHeader.trackCount = 1;
+    gCurrSongHeader.blockCount = 0;
+    gCurrSongHeader.priority = 1;
+    gCurrSongHeader.reverb = SOUND_MODE_REVERB_SET+50;
+    gCurrSongHeader.tone = &voicegroup005;
+    gCurrVoice = DEFAULT_VOICE_NUM;
+    *gCurrSongHeader.part = &gCurrSongTrack;
+}
 
 const char * const gScores[] = {
     // Lost In Thoughts All Alone (Fire Emblem)
@@ -263,6 +295,7 @@ void AgbMain()
     InitBG();
     InitOBJ();
     m4aSoundInit();
+    initCurrSongHeader();
 
     EnableKeyInput();
 
@@ -342,7 +375,7 @@ void fillSongWithScore(char *score) {
     gCurrSongTrack[2] = TEMPO;
     gCurrSongTrack[3] = 60;
     gCurrSongTrack[4] = VOICE;
-    gCurrSongTrack[5] = 0;
+    gCurrSongTrack[5] = gCurrVoice;
     gCurrSongTrack[6] = VOL;
     gCurrSongTrack[7] = 127;
     gCurrSongTrack[8] = PAN;
@@ -400,7 +433,7 @@ void fillSongWithNotes(u8 *notes)
     gCurrSongTrack[2] = TEMPO;
     gCurrSongTrack[3] = 60;
     gCurrSongTrack[4] = VOICE;
-    gCurrSongTrack[5] = 0;
+    gCurrSongTrack[5] = gCurrVoice;
     gCurrSongTrack[6] = VOL;
     gCurrSongTrack[7] = 127;
     gCurrSongTrack[8] = PAN;
@@ -525,9 +558,19 @@ static void VBlankIntr(void)
         }
     }
 
+    int oldVoice = gCurrVoice;
+    if (key_hit(DPAD_DOWN))
+    {
+        gCurrVoice++;
+        if (gCurrVoice > MAX_VOICE_NUM)
+        {
+            gCurrVoice = 0;
+        }
+    }
+
     if (gAutoplay)
     {
-        if (!oldAutoplay || oldSongId != gSongId)
+        if (!oldAutoplay || oldSongId != gSongId || oldVoice != gCurrVoice)
         {
             fillSongWithScore(gScores[gSongId]);
             m4aSongStart(&gCurrSong);
@@ -572,7 +615,7 @@ static void VBlankIntr(void)
 
     if (gCurrNotes[0])
     {
-        mgba_printf(MGBA_LOG_INFO, "AgbMain: gCurrNotes: %s", gCurrNotes);
+        mgba_printf(MGBA_LOG_INFO, "VBlankIntr: gCurrNotes: %s", gCurrNotes);
         fillSongWithNotes(gCurrNotes);
         m4aSongStart(&gCurrSong);
     }
