@@ -53,13 +53,16 @@ const u32 gKeyMaskPalette[] = INCBIN_U32("graphics/key_mask.gbapal.lz");
 void InitBG(void);
 void InitOBJ(void);
 
-u8 gAutoplay = 0;
+int gAutoplay = 0;
+int gSongId = 0;
+
+#define MAX_OPEN_KEYS 5
 
 #define MAX_TRACK_SIZE 0x1000
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
 const struct SongHeader gCurrSongHeader = {1, 0, 1, SOUND_MODE_REVERB_SET+50, &voicegroup005, &gCurrSongTrack};
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
-void fillSong(char *score);
+void fillSongWithScore(char *score);
 void fillSongWithNotes(u8 *notes);
 
 const char * const gScores[] = {
@@ -105,6 +108,103 @@ const char * const gScores[] = {
 	"[e4] 8 w e w y"
 	"[e5] 9 e r w|"
 	"[e6]|0|w|e",
+    // Beyond The Distant Skies (Fire Emblem)
+    // by Yuka Tsujiyoko
+    // TEMPO: 125
+    "[eT60*]|Tyu[upT]||"
+    "[ywurp95]|[uo][yi][eT][ut]|[yr]|"
+    "[upeT60]|6|6|6 [yQ]"
+    "[wu6]|6 Sf[j6]|6|"
+    "[upTS6]| [yd6] [uf6]||"
+    "[toihe4]| [ig4][ts][pe4]||"
+    "[yurof5]| [yd5][ts][ra5]||"
+    "[upTS6]| [yd6] [uf6] 3|6"
+    "[upTS6]| [yd6] [uf6]||"
+    "[toihe4]| [ig4][ts][pe4]||"
+    "[yurof5]| [yd5][ts][ra5]| [ra]"
+    "[yupdT6]| 6 [TS6] 3|6"
+    "[tie4]| 4 [wr4]|[qe] 4"
+    "[wri4] 4[w0][yr] 1 [oa4] 1 [od4] 1"
+    "[yri4]| 4 [te4]|[wr] 4"
+    "[tie4] 4[qe][ut] 1 [sp4] 1 [pf4] 6"
+    "[utof5]| 5 [yro5]|[toe] 5"
+    "[yrod5] 5|2 5 5 2 5"
+    "[yped6]| 6 [rpea6]|[yped] 6"
+    "[upfeTS6] 3|6|3 6|"
+    "[upTS6]| [yd6] [uf6]||"
+    "[toihe4]| [ig4][ts][pe4]||"
+    "[yurof5]| [yd5][ts][ra5]||"
+    "[upTS6]| [yd6] [uf6] 3|6"
+    "[upTS6]| [yd6] [uf6]||"
+    "[toihe4]| [ig4][ts][pe4]||"
+    "[yurof5]| [yd5][ts][ra5]| [ra]"
+    "[yupdT6]| 6 [TS6] 3|6"
+    "[tie4]| 4 [wr4]|[qe] 4"
+    "[wri4] 4[w0][yr] 1 [oa4] 1 [od4] 1"
+    "[yri4]| 4 [te4]|[wr] 4"
+    "[tie4] 4[qe][ut] 1 [sp4] 1 [pf4] 6"
+    "[utof5]| 5 [yro5]|[toe] 5"
+    "[yrod5] 5|2 5 5 2 5"
+    "[yped6]| 6 [rpea6]|[yped] 6"
+    "[upfeTS6] 3|6|3 6",
+    // Fodlan no Gyoufuu (Fire Emblem)
+    // by Takeru Kanazaki
+    // TEMPO: 168
+    "[y6]up[y0]up[yr]up[yt]up[yr]up[y4]upy[ue]py[u5]pyup[wa]us[a0]p[y6]up[y0]up[yr]up[yt]up[yr]up[y4]upy[ue]py[u5]pyup[yw]uy[u0]o[a6]0e60e[sr][p0]et0er0e4 0[ue]8[f0]e[d5]sa0ew[o0]tre[a6]0[se][p6]0e[rj][k0][le]t0er[k0][je][h4] 0e80[he][g5]fd[f0][fe]w0[yt][ur][oe][a6]0e60e[sr][p0]et0er0e4 0[ue]8[f0]e[d5]sa0ew[o0]tre[a6]0[se][h6]0er0et0er0e4 0e80e5|0ew0[ta][sr][ed][f2]69[d0]q [p3]70q[wa]0[s9]7[h5]3[h4]8q[wg]e [f5]9we[rd]w[s9]7[a5] [pe92] 9q9[pe6][ra4][ts2][yd30] 0w[ts0][yd7][wuf960]|909w0906909[wd][f0]90[d6]fj90969090w0we [oh] [ts] [uf] [ypid4]|48q4|1[oh4]8[tsq]8[uf6]4[yod3]|[upf3]706|3[ts7]8[yd9]8[ra7]5[tsi4]|1[oha4]6805 [ig9]w[urf]w[yd9][upf7]6 789780we[woh]0[ts9]8[uf7]5[ypid4]8q48q44 1[oh4]8[tsq]8[uf6]4[yod3]70[upf3]7066 3[sl7]8[zd9]8[ka7]5[slg4]|1468q5 [sl]2[zd5]7[ka9]w[kfa6] 6[pjf8]90wertw09875[y4]upyupyupyupyup[y6]upyupy[u3]pyupausap[y4]upyupyupyupyup[y6]upyupy[u3]pyupausap",
+    // The Edge of Dawn (Fire Emblem: Three Houses)
+    // by Yuka Tsujiyoko
+    // TEMPO: 180
+    "[yd] y y y [yg] y [yj] y"
+    "[yj] y y y [yd] y y y"
+    "[yd] y y y y [yf] [yg] [yh]"
+    "[yg] y y y [yf] y y y"
+    "[yd] y y y [yg] y [yj] y"
+    "[yl] y y y [yJ] y [yj] y"
+    "[yd] y y y y [yf] [yg] [yh]"
+    "[yh] y y y y|||"
+    "[tie92] [92] [92] [92]"
+    "[uoE92] [92] [92] [92]"
+    "[wuE92] [92] [92] [92]"
+    "[yqe92] [92] [92] [92]"
+    "[yqe92] [92] [92] [92]"
+    "[wtq92] [92] [92] [92]"
+    "[wuE92] [92] [92] [92]"
+    "[eT920] [92] [92] [92]"
+    "[tie2] 2 2 2"
+    "[uoE2] 2 2 2"
+    "[wuE2] 2 2 2"
+    "[yqe2] 2 2 2"
+    "[yqe2] 2 2 2"
+    "[wtq2] 2 2 2"
+    "[wuE2] 2 2 2"
+    "[eT20] 2 2 [y2]u"
+    "[i2]69 u[y6]t[y2]69 t[E6]e[w2]6e9|6"
+    "269|[y6]u[i2]69 u[y6]t[y2]69 u[i6]o"
+    "[u1]5t8|5 158|[d5]f"
+    "[g2]69 f[d6]s[d2]69 s[P6]p"
+    "[o2]6p9|6 269|[p6]P"
+    "[s92] P| p"
+    "[81]| o|i"
+    "[oe6] p|"
+    "[ig]|[oh]|[uf] [pigd2]|[qe9]|[qe9]"
+    "[ig2]|[qohe9]|[uqfe9] [utso1]|[w^0]|[w^0]"
+    "[ig1]|[woh^0]|[wuf^0] [ig2]| [sqle9]|"
+    "[sl^] [PJ] [qpj^9] [oh][pj]1|[w^0]|[w^0]"
+    "[ig1]|[woh^0]|[wuf^0] [pigd2]|[qe9]|[qe9]"
+    "[ig2]|[qohe9]|[uqfe9] [utso1]| [wsl^0]|"
+    "[sl1] [PJ] [wpj^0] [oh] [ig2]| [qpje9]|"
+    "[ohdP5]| [ywigE]| [usf92]|[yped9]|||"
+    "i|o|u [qie9]|||"
+    "i|o|u [wt80]|||"
+    "i|o|u [qie9]| s|"
+    "[sqE9] P p op[w80]|||"
+    "i|o|u [qie9]|||"
+    "i|o|u [wt80]| s|"
+    "s P p o [qie9]| p|"
+    "[woE9]| i|"
+    "[u9]qe|y|||"
+    "dgjzcbnxbzvnxbz|"
+    "cb[zb]| z",
 };
 
 u16 __key_curr=0, __key_prev=0;
@@ -236,7 +336,7 @@ const int gNotes[128] = {
     ['m'] = Cn7,
 };
 
-void fillSong(char *score) {
+void fillSongWithScore(char *score) {
     gCurrSongTrack[0] = KEYSH;
     gCurrSongTrack[1] = 0;
     gCurrSongTrack[2] = TEMPO;
@@ -263,18 +363,22 @@ void fillSong(char *score) {
                 int pos = i;
                 score++;
                 for (; *score != ']'; score++, cnt++) {
-                    gCurrSongTrack[i++] = TIE;
-                    gCurrSongTrack[i++] = gNotes[*score];
-                    gCurrSongTrack[i++] = 127;
+                    if (cnt < MAX_OPEN_KEYS)
+                    {
+                        gCurrSongTrack[i++] = TIE;
+                        gCurrSongTrack[i++] = gNotes[*score];
+                        gCurrSongTrack[i++] = 127;
+                    }
                 }
                 gCurrSongTrack[i++] = W24;
-                for (int j = 0; j < cnt; j++) {
+                for (int j = 0; j < cnt && j < MAX_OPEN_KEYS; j++) {
                     gCurrSongTrack[i++] = EOT;
                     gCurrSongTrack[i++] = gCurrSongTrack[pos + 3 * j + 1];
                 }
+                //mgba_printf(MGBA_LOG_DEBUG, "fillSongWithScore: [%d]", cnt);
                 break;
             case ']':
-                mgba_printf(MGBA_LOG_ERROR, "fillSong: unexpected ']' at %s", score);
+                mgba_printf(MGBA_LOG_ERROR, "fillSongWithScore: unexpected ']' at %s", score);
                 break;
             default:
                 gCurrSongTrack[i++] = N24;
@@ -388,29 +492,50 @@ void InitIntrHandlers(void)
     EnableInterrupts(INTR_FLAG_VBLANK);
 }
 
+#define maxSongId sizeof(gScores) / sizeof(gScores[0]) - 1
+
 static void VBlankIntr(void)
 {
     m4aSoundMain();
 
     key_poll();
 
-    u8 autoplay = gAutoplay;
+    int oldAutoplay = gAutoplay;
     if (key_hit(DPAD_UP))
     {
         gAutoplay = 1 - gAutoplay;
     }
 
+    int oldSongId = gSongId;
+    if (key_hit(DPAD_LEFT))
+    {
+        gSongId--;
+        if (gSongId < 0)
+        {
+            gSongId = maxSongId;
+        }
+    }
+
+    if (key_hit(DPAD_RIGHT))
+    {
+        gSongId++;
+        if (gSongId > maxSongId)
+        {
+            gSongId = 0;
+        }
+    }
+
     if (gAutoplay)
     {
-        if (!autoplay)
+        if (!oldAutoplay || oldSongId != gSongId)
         {
-            fillSong(gScores[0]);
+            fillSongWithScore(gScores[gSongId]);
             m4aSongStart(&gCurrSong);
         }
         return;
     }
 
-    if (autoplay)
+    if (oldAutoplay)
     {
         m4aSongStop(&gCurrSong);
     }
