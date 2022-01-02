@@ -68,19 +68,10 @@ void fillSongWithNotes(u8 *notes);
 
 const struct ToneData * const voicegroups[] = {
     &voicegroup000,
-    &voicegroup001,
-    &voicegroup002,
-    &voicegroup003,
-    &voicegroup004,
-    &voicegroup005,
-    &voicegroup006,
-    &voicegroup007,
-    &voicegroup008,
-    &voicegroup009,
-    //&voicegroup117,
 };
 
 #define MAX_VOICEGROUP_NUM sizeof(voicegroups) / sizeof(voicegroups) - 1
+#define DEFAULT_VOICEGROUP_NUM 0
 
 int gCurrVoice;
 
@@ -93,7 +84,7 @@ void initCurrSongHeader()
     gCurrSongHeader.blockCount = 0;
     gCurrSongHeader.priority = 1;
     gCurrSongHeader.reverb = SOUND_MODE_REVERB_SET+50;
-    gCurrSongHeader.tone = &voicegroup005;
+    gCurrSongHeader.tone = voicegroups[DEFAULT_VOICEGROUP_NUM];
     gCurrVoice = DEFAULT_VOICE_NUM;
     *gCurrSongHeader.part = &gCurrSongTrack;
 }

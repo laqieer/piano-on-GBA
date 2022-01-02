@@ -404,16 +404,6 @@ extern const u8 gNoiseTable[];
 extern const struct PokemonCrySong gPokemonCrySongTemplate;
 
 extern const struct ToneData voicegroup000;
-extern const struct ToneData voicegroup001;
-extern const struct ToneData voicegroup002;
-extern const struct ToneData voicegroup003;
-extern const struct ToneData voicegroup004;
-extern const struct ToneData voicegroup005;
-extern const struct ToneData voicegroup006;
-extern const struct ToneData voicegroup007;
-extern const struct ToneData voicegroup008;
-extern const struct ToneData voicegroup009;
-extern const struct ToneData voicegroup117;
 
 extern char gNumMusicPlayers[];
 extern char gMaxLines[];
