@@ -267,25 +267,25 @@ void clearCurrNotes()
     memset(gCurrNotes, 0, sizeof(gCurrNotes));
 }
 
-enum PITCH {
-    PITCH_LOW = 0,
-    PITCH_MID,
-    PITCH_HIGH,
+enum RANGE {
+    RANGE_LOW = 0,
+    RANGE_MID,
+    RANGE_HIGH,
 };
 
 const u8 gNoteLUT[] = {
-    Gn3, // L + A
-    An3, // L + B
-    Bn3, // L + Select
-    Cn4, // L + Start
-    Dn4, // A
-    En4, // B
-    Fn4, // Select
+    Cn4, // L + A
+    Cs4, // L + B
+    Dn4, // L + Select
+    Ds4, // L + Start
+    En4, // A
+    Fn4, // B
+    Fs4, // Select
     Gn4, // Start
-    An4, // R + A
-    Bn4, // R + B
-    Cn5, // R + Select
-    Dn5, // R + Start
+    Gs4, // R + A
+    An4, // R + B
+    As4, // R + Select
+    Bn4, // R + Start
 };
 
 void EnableKeyInput()
@@ -593,32 +593,32 @@ static void VBlankIntr(void)
 
     clearCurrNotes();
 
-    enum PITCH pitch = PITCH_MID;
+    enum RANGE range = RANGE_MID;
     if (key_pressed(L_BUTTON))
     {
-        pitch = PITCH_LOW;
+        range = RANGE_LOW;
     }
     if (key_pressed(R_BUTTON))
     {
-        pitch = PITCH_HIGH;
+        range = RANGE_HIGH;
     }
 
     int i = 0;
     if (key_hit(A_BUTTON))
     {
-        gCurrNotes[i++] = gNoteLUT[4 * pitch];
+        gCurrNotes[i++] = gNoteLUT[4 * range];
     }
     if (key_hit(B_BUTTON))
     {
-        gCurrNotes[i++] = gNoteLUT[4 * pitch + 1];
+        gCurrNotes[i++] = gNoteLUT[4 * range + 1];
     }
     if (key_hit(SELECT_BUTTON))
     {
-        gCurrNotes[i++] = gNoteLUT[4 * pitch + 2];
+        gCurrNotes[i++] = gNoteLUT[4 * range + 2];
     }
     if (key_hit(START_BUTTON))
     {
-        gCurrNotes[i++] = gNoteLUT[4 * pitch + 3];
+        gCurrNotes[i++] = gNoteLUT[4 * range + 3];
     }
 
     if (gCurrNotes[0])
