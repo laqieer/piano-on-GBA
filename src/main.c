@@ -248,6 +248,8 @@ void fillSongWithId(int id) {
         switch (*score)
         {
             case ' ':
+                gCurrSongTrack[i++] = W06;
+                break;
             case '\t':
             case '\r':
             case '\n':
