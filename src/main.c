@@ -62,7 +62,7 @@ int gSongId = 0;
 EWRAM_DATA u8 gCurrSongTrack[MAX_TRACK_SIZE];
 EWRAM_DATA struct SongHeader gCurrSongHeader;
 const struct Song gCurrSong = {&gCurrSongHeader, 0, 0};
-void fillSongWithScore(char *score);
+void fillSongWithId(int id);
 void fillSongWithNotes(u8 *notes);
 
 const struct ToneData * const voicegroups[] = {
@@ -96,6 +96,13 @@ void initCurrSongHeader()
     gCurrVoice = DEFAULT_VOICE_NUM;
     *gCurrSongHeader.part = &gCurrSongTrack;
 }
+
+const int gScoreTempos[] = {
+    70,
+    125,
+    168,
+    180,
+};
 
 const char * const gScores[] = {
     // Lost In Thoughts All Alone (Fire Emblem)
@@ -369,11 +376,13 @@ const int gNotes[128] = {
     ['m'] = Cn7,
 };
 
-void fillSongWithScore(char *score) {
+void fillSongWithId(int id) {
+    char *score = gScores[id];
     gCurrSongTrack[0] = KEYSH;
     gCurrSongTrack[1] = 0;
     gCurrSongTrack[2] = TEMPO;
-    gCurrSongTrack[3] = 60;
+    //gCurrSongTrack[3] = gScoreTempos[id] / 2;
+    gCurrSongTrack[3] = gScoreTempos[id];
     gCurrSongTrack[4] = VOICE;
     gCurrSongTrack[5] = gCurrVoice;
     gCurrSongTrack[6] = VOL;
@@ -408,10 +417,9 @@ void fillSongWithScore(char *score) {
                     gCurrSongTrack[i++] = EOT;
                     gCurrSongTrack[i++] = gCurrSongTrack[pos + 3 * j + 1];
                 }
-                //mgba_printf(MGBA_LOG_DEBUG, "fillSongWithScore: [%d]", cnt);
                 break;
             case ']':
-                mgba_printf(MGBA_LOG_ERROR, "fillSongWithScore: unexpected ']' at %s", score);
+                mgba_printf(MGBA_LOG_ERROR, "fillSongWithId: unexpected ']' at %s", score);
                 break;
             default:
                 gCurrSongTrack[i++] = N24;
@@ -431,7 +439,7 @@ void fillSongWithNotes(u8 *notes)
     gCurrSongTrack[0] = KEYSH;
     gCurrSongTrack[1] = 0;
     gCurrSongTrack[2] = TEMPO;
-    gCurrSongTrack[3] = 60;
+    gCurrSongTrack[3] = 75;
     gCurrSongTrack[4] = VOICE;
     gCurrSongTrack[5] = gCurrVoice;
     gCurrSongTrack[6] = VOL;
@@ -572,7 +580,7 @@ static void VBlankIntr(void)
     {
         if (!oldAutoplay || oldSongId != gSongId || oldVoice != gCurrVoice)
         {
-            fillSongWithScore(gScores[gSongId]);
+            fillSongWithId(gSongId);
             m4aSongStart(&gCurrSong);
         }
         return;
