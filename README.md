@@ -14,4 +14,4 @@ Turn your Game Boy Advance into a piano!
 |. .|short pause|
 |.&#124;.|long pause|
 |[...]|play notes together simultaneously|
-|[. . .]||play the sequence at fastest possible speed|
+|[. . .]|play the sequence at fastest possible speed|
