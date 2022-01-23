@@ -249,9 +249,20 @@ void fillSongWithId(int id) {
                 gCurrSongTrack[i++] = W24;
                 break;
             case '[':
+                score++;
+                if (*(score + 1) == ' ') {
+                    for (; *score != ']'; score++) {
+                        if (*score != ' ') {
+                            gCurrSongTrack[i++] = N06;
+                            gCurrSongTrack[i++] = gNotes[*score];
+                            gCurrSongTrack[i++] = 127;
+                            gCurrSongTrack[i++] = W06;
+                        }
+                    }
+                    break;
+                }
                 int cnt = 0;
                 int pos = i;
-                score++;
                 for (; *score != ']'; score++, cnt++) {
                     if (cnt < MAX_OPEN_KEYS)
                     {
