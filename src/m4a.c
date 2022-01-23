@@ -1858,8 +1858,6 @@ void ply_endtie(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *trac
 {
     struct SoundChannel *tempChan;
 
-    //remove_masks();
-
     if (*track->cmdPtr < 0x80) {
         track->key = *track->cmdPtr;
         track->cmdPtr++;
@@ -1870,7 +1868,7 @@ void ply_endtie(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *trac
         if ((((tempChan->statusFlags & (SOUND_CHANNEL_SF_START | SOUND_CHANNEL_SF_ENV)) != 0) && ((tempChan->statusFlags & SOUND_CHANNEL_SF_STOP) == 0)) && (tempChan->midiKey == track->key)) break;
         tempChan = tempChan->nextChannelPointer;
     }
-    tempChan->statusFlags |= 0x40;
+    tempChan->statusFlags |= SOUND_CHANNEL_SF_STOP;
 }
 
 void mask_key(u8 key)
@@ -1895,7 +1893,6 @@ void ply_note(u32 time, struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTra
     struct ToneData *inst = &track->tone;
     u8 instType = track->tone.type;
     u8 instKey = track->key;
-    remove_masks();
     mask_key(instKey);
     if (instType & (TONEDATA_TYPE_RHY | TONEDATA_TYPE_SPL)) {
         u32 instIndex = 12 * track->key;
@@ -2052,6 +2049,9 @@ void MPlayMain(struct MusicPlayerInfo *mplayInfo)
                     while(tempTrack->flags){
                         if(tempTrack->wait){
                             tempTrack->wait--;
+                            if(!tempTrack->wait){
+                                remove_masks();
+                            }
                             if((tempTrack->lfoSpeed) && (tempTrack->mod)){
                                 if(tempTrack->lfoDelayC){
                                     tempTrack->lfoDelayC--;
@@ -2086,7 +2086,6 @@ void MPlayMain(struct MusicPlayerInfo *mplayInfo)
                                 ply_note(cmd - 0xcf,mplayInfo,tempTrack);
                             }else if(cmd <= 0xb0){
                                 tempTrack->wait = gClockTable[cmd - 0x80];
-                                //remove_masks();
                             }else{
                                 mplayInfo->cmd = (u8)(cmd - 0xb1);
                                 void (*MPlayJumpTable)(struct MusicPlayerInfo*, struct MusicPlayerTrack*, u8*);
